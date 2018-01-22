@@ -1,0 +1,48 @@
+Indexar documento presentes no arquivo "index_course.txt"
+
+Os dois principais tipos de sintaxes de buscas são "query" e "filter". A principal diferença que percebi é que o "filter" é um pouco mais rápido porque não calcula o score. 
+Ambos podem ser combinados para consultas complexas.
+
+Algumas consultas usadas na lição:
+
+Consultar todos
+GET courses/_search
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+Consultar cursos com o nome "computer"
+GET courses/_search
+{
+  "query": {
+    "match": {
+      "name": "computer"
+    }
+  }
+}
+
+Executar uma consulta com mais de um critério usando "must"
+GET courses/_search
+{
+  "query": {
+    
+    "bool": {
+      "must": [
+        {"match" : {"name": "computer"}},
+        {"match": {"room": "c8"}}
+      ]
+    }
+  }
+}
+
+Verificar se um campo (field) existe em um documento. Neste caso, não é o conteúdo, mas sim o campo.
+GET courses/_search
+{
+  "query": {
+    "exists": {
+      "field" : "professor.phone"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+Restringindo a alteração dinâmica do esquema pré-definido.
+"dynamic" : "false" --> a indexação do campo será ignorada.
+"dynamic" : "strict" --> a indexação do campo levantará uma exceção.
+
+PUT /customers/_mapping/online
+{
+  "dynamic" : false
+}
+
+Testando analyzers
+Página de referência: https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-analyzers.html
+IMPORTANTE: estudar mais profundamente os analisadores. 
+
+Brazilian Analyser (https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-lang-analyzer.html)
+
+Criando o analisador de português do Brasil
+PUT /brazilian_example
+{
+  "settings": {
+    "analysis": {
+      "filter": {
+        "brazilian_stop": {
+          "type":       "stop",
+          "stopwords":  "_brazilian_" 
+        },
+        "brazilian_keywords": {
+          "type":       "keyword_marker",
+          "keywords":   ["exemplo"] 
+        },
+        "brazilian_stemmer": {
+          "type":       "stemmer",
+          "language":   "brazilian"
+        }
+      },
+      "analyzer": {
+        "brazilian": {
+          "tokenizer":  "standard",
+          "filter": [
+            "lowercase",
+            "brazilian_stop",
+            "brazilian_keywords",
+            "brazilian_stemmer"
+          ]
+        }
+      }
+    }
+  }
+}
+
+Testando o analisador de português do Brasil criado. Bem interessante!
+POST /brazilian_example/_analyze
+{
+  "analyzer": "brazilian",
+  "text": "Os primeira casais são fundamentalmente felizes casado: testando uma vez mais. parando parar parado"
+}
+
+Como os analisadores customizados são definidos na seção "settings" de um índice, é possível pesquisá-los, conforme abaixo:
+GET /brazilian_example/_settings/

@@ -1,0 +1,92 @@
+PUT /customers/online/123
+{
+  "name": "Joe Swanson",
+  "gender": "male",
+  "age": 30,
+  "total_spent": 275.5,
+  "is_new": false
+}
+
+Criando somente o índice primeiro
+PUT /customers
+{
+  "settings": {
+    "number_of_shards": 2,
+    "number_of_replicas": 1
+  },
+  "mappings": {}
+}
+
+Definindo tipo de documento e seu respectivo esquema
+Tipos de dados: https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html
+PUT /customers/_mapping/online
+{
+  "properties": {
+    "name": {
+      "type": "text",
+      "analyzer": "standard"
+    }
+  }
+}
+
+PUT /customers/_mapping/instore
+{
+  "properties": {
+    "name": {
+      "type": "text",
+      "analyzer": "standard"
+    }
+  }
+}
+
+Complementando o esquema
+PUT /customers/_mapping/instore
+{
+  "properties": {
+    "gender": {
+      "type": "text",
+      "analyzer": "standard"
+    },
+    "age": {
+      "type": "integer"
+    },
+    "total_spent": {
+      "type": "float"
+    },
+    "is_new": {
+      "type": "boolean"
+    }
+  }
+}
+
+Criando mappings e settings de uma vez
+PUT /customers
+{
+  "mappings": {
+    "online": {
+      "properties": {
+        "name": {
+          "type": "text",
+          "analyzer": "standard"
+        },
+        "gender": {
+          "type": "text",
+          "analyzer": "standard"
+        },
+        "age": {
+          "type": "integer"
+        },
+        "total_spent": {
+          "type": "float"
+        },
+        "is_new": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "settings": {
+    "number_of_shards": 2,
+    "number_of_replicas": 1
+  }
+}

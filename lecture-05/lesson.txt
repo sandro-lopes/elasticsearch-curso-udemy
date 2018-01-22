@@ -1,0 +1,54 @@
+Mapping and Settings
+
+PUT business/building/110
+{
+  "adress": "57 New Dover Ln",
+  "floors" : 10,
+  "offices" : 21,
+  "loc": {
+    "lat" : 40.707519,
+    "lon" : -74.008560
+  }
+}
+
+PUT business/building/217
+{
+  "adress": "11 Pen Ave",
+  "floors" : 5,
+  "offices" : 7,
+  "loc": {
+    "lat" : 40.693479,
+    "lon" : -73.983854
+  }
+}
+
+PUT business/employee/330
+{
+  "name": "Richard Bell",
+  "title" : "Senior Accountant",
+  "salar_usd" : 115000.00,
+  "hiredate": "Jan 19, 2013"
+}
+
+PUT business/employee/331
+{
+  "name": "Steve Honor",
+  "title" : "Attorney",
+  "salar_usd" : 140000.00,
+  "hiredate": "Oct 10, 2010"
+}
+
+Pesquisa por todos os documentos do índice
+GET business/_search
+
+Buscando employees cujo nome é "honor"
+GET business/employee/_search
+{
+  "query": {
+    "term": {
+      "name": {
+        "value": "honor"
+      }
+    }
+  }
+}

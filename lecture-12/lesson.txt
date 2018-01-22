@@ -1,0 +1,111 @@
+Usando filters. Principal característica: não calcula o score e as pesquisas ficam em cache, por isso, é um pouco mais rápido.
+GET courses/_search
+{
+  "query": {
+    "bool": {
+      "filter": {
+        "match" : {"name" : "accounting"}
+      }
+    }
+  }
+}
+
+Com mais de um critério...
+GET courses/_search
+{
+  "query": {
+    "bool": {
+      "filter": {
+        "bool": {
+          "must" : [
+            {"match": {"professor.name": "bill"}},
+            {"match": {"name": "accounting"}}
+          ],
+          "must_not" : [
+            {"match": {"room": "e7"}}
+          ]
+        }
+      }
+    }
+  }
+}
+
+É possível utilizar o filter e match fora do filter. Neste caso, o os documentos retornados terão seu score calculados com base nas restrições fora do filter
+GET courses/_search
+{
+  "query": {
+    "bool": {
+      "filter": {
+        "bool": {
+          "must" : [
+            {"match": {"professor.name": "bill"}},
+            {"match": {"name": "accounting"}}
+          ]
+        }
+      },
+      "must" : [
+        {"match": {"room": "e3"}}
+      ]
+    }
+  }
+}
+
+Utilizando range juntamente com filter. No exemplo abaixo, o score está sendo calculado considerando somente a restrição da sala ("room":"e3")
+GET courses/_search
+{
+  "query": {
+    "bool": {
+      "filter": {
+        "bool": {
+          "must" : [
+            {
+              "range": {
+                "students_enrolled": {
+                  "gte": 19
+                }
+              }
+            }
+          ]
+        }
+      },
+      "must" : [
+        {"match": {"room": "e3"}}
+      ]
+    }
+  }
+}
+
+Também é possível não restringir (match), mas calcular o score daqueles que idealmente apresentam um conjunto de condições (should)
+No exemplo abaixo, os documentos da sala "e3" e/ou com 13 ou 14 estudando inscritos tem um score maior. Quem não atende nenhum desses requisitos
+também é retornado, mas com um score menor.
+GET courses/_search
+{
+  "query": {
+    "bool": {
+      "filter": {
+        "bool": {
+          "must" : [
+            {
+              "range": {
+                "students_enrolled": {
+                  "gte": 12
+                }
+              }
+            }
+          ]
+        }
+      },
+      "should" : [
+        {"match": {"room": "e3"}},
+        {
+          "range": {
+            "students_enrolled": {
+              "gte": 13,
+              "lte": 14
+            }
+          }
+        }
+      ]
+    }
+  }
+}

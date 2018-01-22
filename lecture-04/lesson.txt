@@ -1,0 +1,29 @@
+Indexar um documento passando o identificador
+PUT vehicles/car/123
+{
+  "make": "Honda",
+  "Color": "Black",
+  "HP": 250,
+  "milage": 25000,
+  "price" : 1930.97
+}
+
+Buscar um documento indexado a partir do seu identificados
+GET vehicles/car/123
+
+Verificar se um documento existe
+HEAD vehicles/car/123
+
+Atualizar campos específicos de um documento. Na verdade, o documento inteiro é atualizado, mas é possível passar somente os campos que precisam ser atualizados.
+POST vehicles/car/123/_update
+{
+  "doc": {
+    "price": 19500.50
+  }
+}
+
+Deletar um documento do índice a partir de um identificador
+DELETE vehicles/car/123
+
+Delatar um índice, seus tipos de documentos e documentos indexados. 
+DELETE vehicles
