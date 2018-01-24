@@ -1,0 +1,62 @@
+É póssível descobrir dados estatísticos (max, min, média, etc.) sem a necessidade de escrever uma condição para cada caso
+GET /vehicles/cars/_search
+{
+  "size": 0, 
+  
+  "aggs": {
+    "popular_cars": {
+      "terms": {
+        "field": "make.keyword"
+      },
+      "aggs": {
+        "stats_on_price": {
+          "stats": {
+            "field": "price"
+          }
+        }
+      }
+    }
+  }
+}
+
+Agrupamento por range de datas e incluindo a média de preço para cada agrupamento
+GET /vehicles/cars/_search
+{
+  "size": 0, 
+  
+  "aggs": {
+    "popular_cars": {
+      "terms": {
+        "field": "make.keyword"
+      },
+      "aggs": {
+        "sold_date_ranges": {
+          "range": {
+            "field": "sold",
+            
+            "ranges": [
+              {
+                "from": "2016-01-01",
+                "to": "2016-05-18"
+              },
+              {
+                "from": "2016-05-18",
+                "to": "2017-01-01"
+              }
+            ]
+          },
+          "aggs": {
+            "avg_on_price": {
+              "avg": {
+                "field": "price"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+

@@ -1,0 +1,141 @@
+Pesquisar por documentos, determinando a quantidade retornada (por default são 10), em qual documento iniciar, e ordenando.
+GET /vehicles/cars/_search
+{
+  "from": 0, 
+  "size": 5, 
+  
+  "query": {
+    "match_all": {}
+  },
+  
+  "sort": [
+    {
+      "price": {
+        "order": "desc"
+      }
+    }
+  ]
+}
+
+Contagem
+GET /vehicles/cars/_count
+{
+  "query": {
+    "match": {
+      "make": "dodge"
+    }
+  }
+}
+
+Quando executar uma consulta do tipo "aggregation", primeiro aparece todos os hits (documentos encontrado) para depois aparacer o agrupamento (aggregation). 
+No exemplo abaixo, o agrupamento está sendo feito pela marca. É necessário colocar "make.keyword" porque o tipo de dados "make" é um "text" e só é possível utilizar aggregation como tipos de dados de valores. 
+Se no lugar da marca fosse utilizado o valor, por exemplo, não colocaria o ".keyword" (na verdade, nem poderia)
+GET /vehicles/cars/_search
+{
+  "aggs": {
+    "popular_cars": {
+      "terms": {
+        "field": "make.keyword"
+      }
+    }
+  }
+}
+
+Média, máxima, mínima e estatística
+GET /vehicles/cars/_search
+{
+  "aggs": {
+    "popular_cars": {
+      "terms": {
+        "field": "make.keyword"
+      },
+      "aggs": {
+        "avg_price": {
+          "avg": {
+            "field": "price"
+          }
+        },
+        "max_price": {
+          "max": {
+            "field": "price"
+          }
+        },
+        "min_price": {
+          "min": {
+            "field": "price"
+          }
+        }
+      }
+    }
+  }
+}
+
+Aggregation é feita sempre no escopo da consulta. Assim, se restringirmos o resultado somente para retornar carros vermelhos, o cálculo de máxima, mínima e média será feito sobre esses resultados.
+GET /vehicles/cars/_search
+{
+  "query": {
+    "match": {
+      "color": "red"
+    }
+  }, 
+  "aggs": {
+    "popular_cars": {
+      "terms": {
+        "field": "make.keyword"
+      },
+      "aggs": {
+        "avg_price": {
+          "avg": {
+            "field": "price"
+          }
+        },
+        "max_price": {
+          "max": {
+            "field": "price"
+          }
+        },
+        "min_price": {
+          "min": {
+            "field": "price"
+          }
+        }
+      }
+    }
+  }
+}
+
+Se não quiser que os documentos sejam retornados juntamente com os agrupamentos, indique o tamanho como zero.
+GET /vehicles/cars/_search
+{
+  "size": 0, 
+  
+  "query": {
+    "match": {
+      "color": "red"
+    }
+  }, 
+  "aggs": {
+    "popular_cars": {
+      "terms": {
+        "field": "make.keyword"
+      },
+      "aggs": {
+        "avg_price": {
+          "avg": {
+            "field": "price"
+          }
+        },
+        "max_price": {
+          "max": {
+            "field": "price"
+          }
+        },
+        "min_price": {
+          "min": {
+            "field": "price"
+          }
+        }
+      }
+    }
+  }
+}
